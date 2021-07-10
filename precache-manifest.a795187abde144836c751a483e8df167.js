@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "2fedba659907ac5fb354",
+    "revision": "b9dcf8e1587b8fc3ac4f",
     "url": "/YieldFarm_BridgeEthBsc/static/css/main.4633c5f6.chunk.css"
   },
   {
-    "revision": "2fedba659907ac5fb354",
-    "url": "/YieldFarm_BridgeEthBsc/static/js/main.2fedba65.chunk.js"
+    "revision": "b9dcf8e1587b8fc3ac4f",
+    "url": "/YieldFarm_BridgeEthBsc/static/js/main.b9dcf8e1.chunk.js"
   },
   {
     "revision": "c7b33c0684bd17c93fe1",
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/YieldFarm_BridgeEthBsc/static/media/pteria.0c120fa3.png"
   },
   {
-    "revision": "57f6e0370c3738697f35c2de7fe29461",
+    "revision": "b135c4e0f628158652a9e3c4b81d13df",
     "url": "/YieldFarm_BridgeEthBsc/index.html"
   }
 ];
