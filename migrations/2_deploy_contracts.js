@@ -28,7 +28,7 @@ module.exports = async function(deployer, network, accounts ) {
     const tokenFarm = await TokenFarm.deployed()
     
     // Transfer all purse tokens to TokenFarm
-    await purseToken.transfer(tokenFarm.address, tokens('1000000'))
+    await purseToken.transfer(tokenFarm.address, tokens('2000000'))
     console.log('Purse done')
 
     //Deploy BridgeEth contract

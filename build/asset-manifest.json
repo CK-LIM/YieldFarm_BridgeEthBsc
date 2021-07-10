@@ -1,7 +1,7 @@
 {
   "main.css": "/YieldFarm_BridgeEthBsc/static/css/main.4633c5f6.chunk.css",
-  "main.js": "/YieldFarm_BridgeEthBsc/static/js/main.2fedba65.chunk.js",
-  "main.js.map": "/YieldFarm_BridgeEthBsc/static/js/main.2fedba65.chunk.js.map",
+  "main.js": "/YieldFarm_BridgeEthBsc/static/js/main.b9dcf8e1.chunk.js",
+  "main.js.map": "/YieldFarm_BridgeEthBsc/static/js/main.b9dcf8e1.chunk.js.map",
   "static/css/1.e1aff841.chunk.css": "/YieldFarm_BridgeEthBsc/static/css/1.e1aff841.chunk.css",
   "static/js/1.c7b33c06.chunk.js": "/YieldFarm_BridgeEthBsc/static/js/1.c7b33c06.chunk.js",
   "static/js/1.c7b33c06.chunk.js.map": "/YieldFarm_BridgeEthBsc/static/js/1.c7b33c06.chunk.js.map",
@@ -11,6 +11,6 @@
   "static/css/main.4633c5f6.chunk.css.map": "/YieldFarm_BridgeEthBsc/static/css/main.4633c5f6.chunk.css.map",
   "static/css/1.e1aff841.chunk.css.map": "/YieldFarm_BridgeEthBsc/static/css/1.e1aff841.chunk.css.map",
   "index.html": "/YieldFarm_BridgeEthBsc/index.html",
-  "precache-manifest.898034c55d1d792982271523c02a15b2.js": "/YieldFarm_BridgeEthBsc/precache-manifest.898034c55d1d792982271523c02a15b2.js",
+  "precache-manifest.a795187abde144836c751a483e8df167.js": "/YieldFarm_BridgeEthBsc/precache-manifest.a795187abde144836c751a483e8df167.js",
   "service-worker.js": "/YieldFarm_BridgeEthBsc/service-worker.js"
 }

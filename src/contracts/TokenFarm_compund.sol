@@ -64,6 +64,7 @@ contract TokenFarm {
 
     // Unstacking Tokens
     function unstakeTokens() public {
+        updateRewardTokens();
         uint256 balance = stakerInfo[msg.sender].stakingBalance;
         require(balance > 0, "staking balance cannot be 0");
         uint256 end = stakerInfo[msg.sender].stakingTimestamp + duration;
@@ -138,6 +139,7 @@ contract TokenFarm {
     
     // Emergency Unstacking Tokens to withdraw LP tokens with penalty
     function emergencyUnstakeTokens() public {
+        updateRewardTokens();
         uint256 balance = stakerInfo[msg.sender].stakingBalance;
         require(balance > 0, "staking balance cannot be 0");
         uint256 penalty = balance * penaltyRate/100;
@@ -204,6 +206,7 @@ contract TokenFarm {
     }    
     
     function redeemToken(uint256 _amount) public{
+        updateRewardTokens();
         require(_amount > 0, "amount cannot be 0"); 
         uint256 balance = stakerInfo[msg.sender].rewardBalance;
         require(_amount <= balance, "amount more than reward balance");

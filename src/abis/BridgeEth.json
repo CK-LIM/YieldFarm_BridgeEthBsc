@@ -72,7 +72,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -157,7 +158,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -170,7 +172,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"date\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"},{\"indexed\":true,\"internalType\":\"enum BridgeBase.Step\",\"name\":\"step\",\"type\":\"uint8\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"burn\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"nonce\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"}],\"name\":\"mint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"processedNonces\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"contract IToken\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/home/ubuntu/Desktop/Blockchain Talent Program/YieldFarming/Yield_Farming_v3/src/contracts/BridgeEth.sol\":\"BridgeEth\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/ubuntu/Desktop/Blockchain Talent Program/YieldFarming/Yield_Farming_v3/src/contracts/BridgeBase.sol\":{\"keccak256\":\"0x842fed75120dce357e8306fc1e8d1663b22a4721039aeb0461b04e359ae1f7df\",\"urls\":[\"bzz-raw://55f7db3d558b84735db2efd3cf0280a4c37e1d0aa4cb8dc0ff4c8a30340e087e\",\"dweb:/ipfs/QmX237s9FQ8WA5FUekeWeBoWaBQSPAb32a6t26NTMdQ5sm\"]},\"/home/ubuntu/Desktop/Blockchain Talent Program/YieldFarming/Yield_Farming_v3/src/contracts/BridgeEth.sol\":{\"keccak256\":\"0xb7066d05d5596c0b0e229068d37fe1eec2c9f0405984b637b0bee6309eef7308\",\"urls\":[\"bzz-raw://256493924643ebf7a83897e868e45c4f66f51e2c65e7d9440961b23c2ccdeb4c\",\"dweb:/ipfs/QmcAfpyWydAQdvXe8QqsVP6ddNgCNZrKwFuLxQso7xApmG\"]},\"/home/ubuntu/Desktop/Blockchain Talent Program/YieldFarming/Yield_Farming_v3/src/contracts/IToken.sol\":{\"keccak256\":\"0x2a842ccad03b057239a7c79717a28adc8edc42f21fed1476a33ad04a2fe6866b\",\"urls\":[\"bzz-raw://c47713ad44aee775e69dd5804f115471b63316c1706621798a5b234515c3f3f0\",\"dweb:/ipfs/QmWnDFRpYHjXqQp43ET5GPD2QZQSWVDwLfaGA6B67q7Lfd\"]},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"keccak256\":\"0xf8e8d118a7a8b2e134181f7da655f6266aa3a0f9134b2605747139fcb0c5d835\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://9ec48567e7ad06acb670980d5cdf3fd7f3949bf12894f02d68c3bb43e75aa84f\",\"dweb:/ipfs/QmaG3R2J9cz92YT77vFjYrjMNU2wHp4ypwYD62HqDUqS5U\"]}},\"version\":1}",
@@ -7110,8 +7113,8 @@
     "4": {
       "events": {},
       "links": {},
-      "address": "0x7d15Df7E66CBa477E002eAD27D2CA2E797f9F29A",
-      "transactionHash": "0xf59d3b84ee1d545605abd740946b70d3fa47a8748a6358c11ca63b026e6c1178"
+      "address": "0xC64A910745B19d6aB73494297aAf068AC6644790",
+      "transactionHash": "0x119bd57a04964a9c1c5b790e272ee550494c7363a71c6c811be8f6330b831847"
     },
     "42": {
       "events": {},
@@ -7133,7 +7136,7 @@
     }
   },
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-08T16:16:55.347Z",
+  "updatedAt": "2021-07-10T08:53:59.687Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
