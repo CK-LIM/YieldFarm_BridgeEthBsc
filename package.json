@@ -24,7 +24,7 @@
     "truffle": "5.1.39",
     "web3": "1.2.11"
   },
-  "homepage": "http://CK-LIM.github.io/Compound_TokenFarm_Bridge_Eth_Bsc",
+  "homepage": "http://CK-LIM.github.io/YieldFarm_BridgeEthBsc",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

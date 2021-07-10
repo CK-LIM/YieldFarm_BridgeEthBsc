@@ -1,33 +1,42 @@
 pragma solidity ^0.8.0;
+
 import "./XToken.sol";
-import "./DaiToken.sol";
+import "./LpXToken.sol";
+import "./PurseToken.sol";
 
 contract TokenFarm {
     string public name = "X Token Farm";
     XToken public xToken;
-    DaiToken public daiToken;
+    LPXToken public lpXToken;
+    PurseToken public purseToken;
     address public owner;
     address[] public stakers;
     uint256 internal tokenBurnRate = 2;
     uint256 public constant duration = 1 days;
     uint256 public constant penaltyRate = 20;
-    FarmInfo public farmInfo;   
+
+    FarmInfo public farmInfo;
+    mapping(address => StakerInfo) public stakerInfo;
     
-    mapping(address => uint256) public stakingBalance;
-    mapping(address => uint256) public stakingTimestamp;
-    mapping(address => bool) public hasStaked;
-    mapping(address => bool) public isStaking;
-    mapping(address => uint256) public poolShareRatio;
-    
+    struct StakerInfo {
+        uint256 stakingBalance;
+        uint256 rewardBalance;
+        uint256 stakingTimestamp;
+        bool hasStaked;
+        bool isStaking;
+        uint256 poolShareRatio;
+    }
+
     struct FarmInfo {
         uint256 blockReward;
         uint256 lastRewardBlock;  // Last block number that reward distribution occurs.
         uint256 farmableSupply; // set in init, total amount of tokens farmable
     }
 
-    constructor(XToken _xToken, DaiToken _daiToken, uint256 _blockReward) public {
+    constructor(XToken _xToken, LPXToken _lpXToken,PurseToken _purseToken, uint256 _blockReward) public {
         xToken = _xToken;
-        daiToken = _daiToken;
+        lpXToken = _lpXToken;
+        purseToken = _purseToken;
         farmInfo.blockReward = _blockReward;
         owner = msg.sender;
     }
@@ -35,36 +44,35 @@ contract TokenFarm {
     // Stakes Tokens
     function stakeTokens(uint256 _amount) public {
         require(_amount > 0, "amount cannot be 0");
-        updateRewardTokens(farmInfo.blockReward);
-        daiToken.transferFrom(msg.sender, address(this), _amount); // Stake dai token
-        stakingBalance[msg.sender] = stakingBalance[msg.sender] + _amount; //Update staking balance
-        stakingTimestamp[msg.sender] = block.timestamp;
-        farmInfo.lastRewardBlock = block.number;
+        updateRewardTokens();
+        xToken.transferFrom(msg.sender, address(this), _amount); // Stake x token
+        stakerInfo[msg.sender].stakingBalance += _amount; 
+        stakerInfo[msg.sender].stakingTimestamp = block.timestamp;
 
-        if (!hasStaked[msg.sender]) {
+        if (!stakerInfo[msg.sender].hasStaked) {
             stakers.push(msg.sender);
         }
 
         //Update staking status
-        isStaking[msg.sender] = true;
-        hasStaked[msg.sender] = true;
+        stakerInfo[msg.sender].isStaking = true;
+        stakerInfo[msg.sender].hasStaked = true;
 
-        xToken.transfer(msg.sender, _amount * tokenBurnRate);
+        lpXToken.transfer(msg.sender, _amount);
         getTotalBalance();
         getPoolShareRatio();
     }
 
     // Unstacking Tokens
     function unstakeTokens() public {
-        uint256 balance = stakingBalance[msg.sender];
+        uint256 balance = stakerInfo[msg.sender].stakingBalance;
         require(balance > 0, "staking balance cannot be 0");
-        uint256 end = stakingTimestamp[msg.sender] + duration;
+        uint256 end = stakerInfo[msg.sender].stakingTimestamp + duration;
         require(block.timestamp >= end, "too early to withdraw Tokens");
-        daiToken.transfer(msg.sender, balance); // Stake dai token
-        xToken.transferFrom(msg.sender, address(this), balance); //return x token
+        xToken.transfer(msg.sender, balance); // withdraw dai token
+        lpXToken.transferFrom(msg.sender, address(this), balance); //return lpX token
 
-        stakingBalance[msg.sender] = 0;
-        isStaking[msg.sender] = false;
+        stakerInfo[msg.sender].stakingBalance = 0;
+        stakerInfo[msg.sender].isStaking = false;
         getTotalBalance();
         getPoolShareRatio();
     }
@@ -77,12 +85,15 @@ contract TokenFarm {
         require(msg.sender == owner, "caller must be owner");
         getTotalBalance();
 
-        // uint256 totalBalance = daiToken.balanceOf(address(this));
-
+        if( farmInfo.farmableSupply == 0){
+            farmInfo.lastRewardBlock = block.number;
+            return;
+        }
+        
         //Issue tokens to all stakers
         for (uint256 i = 0; i < stakers.length; i++) {
             address recipient = stakers[i];
-            uint256 balance = stakingBalance[recipient];
+            uint256 balance = stakerInfo[recipient].stakingBalance;
             uint256 ratio = (balance * 100) / farmInfo.farmableSupply;
             uint256 amount = (_amount * ratio) / 100;
 
@@ -91,36 +102,35 @@ contract TokenFarm {
             uint256 totalamount = amount * diffofblk;
 
             if (totalamount > 0) {
-                stakingBalance[recipient] = stakingBalance[recipient] + totalamount; //Update staking balance
-                xToken.transfer(recipient, _amount * tokenBurnRate);
+                stakerInfo[recipient].rewardBalance += totalamount; //Update reward balance
             }
         }
         farmInfo.lastRewardBlock = block.number;
     }
 
     // Issuing Tokens for internal
-    function updateRewardTokens(uint256 _amount) internal {
-        require(_amount > 0, "amount cannot be 0");
+    function updateRewardTokens() public {
+
         getTotalBalance();
 
 
         if( farmInfo.farmableSupply == 0){
+            farmInfo.lastRewardBlock = block.number;
             return;
         }
         //update reward tokens to all stakers
         for (uint256 i = 0; i < stakers.length; i++) {
             address recipient = stakers[i];
-            uint256 balance = stakingBalance[recipient];
+            uint256 balance = stakerInfo[recipient].stakingBalance;
             uint256 ratio = (balance * 100) / farmInfo.farmableSupply;
-            uint256 amount = _amount * ratio / 100;
+            uint256 amount = farmInfo.blockReward * ratio / 100;
             
             uint256 blknumbernow = block.number;
             uint256 diffofblk = blknumbernow - farmInfo.lastRewardBlock;
             uint256 totalamount = amount * diffofblk;
 
             if (totalamount > 0) {
-                stakingBalance[recipient] = stakingBalance[recipient] + totalamount; //Update staking balance
-                xToken.transfer(recipient, totalamount * tokenBurnRate);
+                stakerInfo[recipient].rewardBalance += totalamount; //Update reward balance
             }
         }
         farmInfo.lastRewardBlock = block.number;
@@ -128,16 +138,16 @@ contract TokenFarm {
     
     // Emergency Unstacking Tokens to withdraw LP tokens with penalty
     function emergencyUnstakeTokens() public {
-        uint256 balance = stakingBalance[msg.sender];
+        uint256 balance = stakerInfo[msg.sender].stakingBalance;
         require(balance > 0, "staking balance cannot be 0");
         uint256 penalty = balance * penaltyRate/100;
         uint256 remainingBalance = balance - penalty;
-        daiToken.transfer(msg.sender, remainingBalance); // Unstake dai token
-        daiToken.transfer(address(this), penalty); // Unstake penalty dai token
-        xToken.transferFrom(msg.sender, address(this), balance); //return x token
+        xToken.transfer(msg.sender, remainingBalance); // Unstake x token
+        xToken.transfer(address(this), penalty); // Unstake penalty x token
+        lpXToken.transferFrom(msg.sender, address(this), balance); //return lpx token
 
-        stakingBalance[msg.sender] = 0;
-        isStaking[msg.sender] = false;
+        stakerInfo[msg.sender].stakingBalance = 0;
+        stakerInfo[msg.sender].isStaking = false;
         getTotalBalance();
         getPoolShareRatio();
     }
@@ -146,7 +156,7 @@ contract TokenFarm {
         uint256 totalBalance;
         for (uint256 i = 0; i < stakers.length; i++) {
             address recipient = stakers[i];
-            uint256 balance = stakingBalance[recipient];
+            uint256 balance = stakerInfo[recipient].stakingBalance;
             totalBalance = balance + totalBalance;
         }
         farmInfo.farmableSupply = totalBalance;
@@ -156,15 +166,15 @@ contract TokenFarm {
         if( farmInfo.farmableSupply == 0){
             for (uint256 i = 0; i < stakers.length; i++) {
                 address recipient = stakers[i];
-                poolShareRatio[recipient] = 0;
+                stakerInfo[recipient].poolShareRatio = 0;
             }
         }
         else {
             for (uint256 i = 0; i < stakers.length; i++) {
                 address recipient = stakers[i];
-                uint256 balance = stakingBalance[recipient];
+                uint256 balance = stakerInfo[recipient].stakingBalance;
                 uint256 ratio = (balance * 100) / farmInfo.farmableSupply;
-                poolShareRatio[recipient] = ratio;
+                stakerInfo[recipient].poolShareRatio = ratio;
             }
         }
     }
@@ -172,32 +182,31 @@ contract TokenFarm {
     function transferOwnership(address _to ,uint256 _amount) public {
         require(_amount > 0, "amount cannot be 0");
         require(_to == address(_to),"Invalid address");
-        uint256 balance = stakingBalance[msg.sender];
+        uint256 balance = stakerInfo[msg.sender].stakingBalance;
         require(_amount <= balance, "amount more than LP balance");
-        updateRewardTokens(farmInfo.blockReward);
-        xToken.transferFrom(msg.sender, _to, _amount); //return x token
-        stakingBalance[msg.sender] -= _amount;
+        updateRewardTokens();
+        lpXToken.transferFrom(msg.sender, _to, _amount); //transfer lpXToken
+        stakerInfo[msg.sender].stakingBalance -= _amount;
         
-        
-        stakingBalance[_to] = stakingBalance[_to] + (_amount/tokenBurnRate); //Update staking balance
-        stakingTimestamp[_to] = stakingTimestamp[msg.sender];
-        farmInfo.lastRewardBlock = block.number;
+        stakerInfo[_to].stakingBalance += (_amount); //Update staking balance
+        stakerInfo[_to].stakingTimestamp = stakerInfo[msg.sender].stakingTimestamp;
 
-        if (!hasStaked[_to]) {
+        if (!stakerInfo[_to].hasStaked) {
             stakers.push(_to);
         }
 
         //Update staking status
-        isStaking[_to] = true;
-        hasStaked[_to] = true;
+        stakerInfo[_to].isStaking = true;
+        stakerInfo[_to].hasStaked = true;
         
         getTotalBalance();
         getPoolShareRatio();
-    }
+    }    
     
-    function swapToken(uint256 _amount) public{
-        require(_amount > 0, "amount cannot be 0");    
-        daiToken.transferFrom(msg.sender, address(this), _amount); // Stake dai token
-        xToken.transfer(msg.sender, _amount * tokenBurnRate);    
+    function redeemToken(uint256 _amount) public{
+        require(_amount > 0, "amount cannot be 0"); 
+        uint256 balance = stakerInfo[msg.sender].rewardBalance;
+        require(_amount <= balance, "amount more than reward balance");
+        purseToken.transfer(msg.sender, _amount* tokenBurnRate); // Redeem reward token
     }
 }

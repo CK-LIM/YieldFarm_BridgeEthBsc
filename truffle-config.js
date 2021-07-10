@@ -22,7 +22,7 @@ module.exports = {
       gas: 3000000,
       gasPrice: 20000000000,
       confirmations: 0,
-//      timeoutBlocks: 600,
+      timeoutBlocks: 400,
       skipDryRun: true
     },
     kovan: {
@@ -44,7 +44,7 @@ module.exports = {
       gas: 3000000,
       gasPrice: 20000000000,
       confirmations: 0,
-      timeoutBlocks: 200,
+      timeoutBlocks: 400,
       skipDryRun: true
     },
   },

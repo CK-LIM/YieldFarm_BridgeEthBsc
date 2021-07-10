@@ -16,6 +16,11 @@ const bridgeEth = new web3Eth.eth.Contract(
   BridgeEth.networks['4'].address
 );
 
+// const bridgeBsc = new web3Eth.eth.Contract(
+//   BridgeEth.abi,
+//   BridgeEth.networks['97'].address
+// );
+
 const bridgeBsc = new web3Bsc.eth.Contract(
   BridgeBsc.abi,
   BridgeBsc.networks['97'].address

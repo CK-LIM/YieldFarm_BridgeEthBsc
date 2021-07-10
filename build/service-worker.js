@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/Compound_TokenFarm_Bridge_Eth_Bsc/precache-manifest.71b904119ba4bae38336a9d9f6174768.js"
+  "/YieldFarm_BridgeEthBsc/precache-manifest.898034c55d1d792982271523c02a15b2.js"
 );
 
 workbox.clientsClaim();
@@ -28,7 +28,7 @@ self.__precacheManifest = [].concat(self.__precacheManifest || []);
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
-workbox.routing.registerNavigationRoute("/Compound_TokenFarm_Bridge_Eth_Bsc/index.html", {
+workbox.routing.registerNavigationRoute("/YieldFarm_BridgeEthBsc/index.html", {
   
   blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });

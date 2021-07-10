@@ -1,59 +1,77 @@
-const DaiToken = artifacts.require("DaiToken");
-const XToken = artifacts.require("XToken");
-const TokenFarm = artifacts.require("TokenFarm");
+const LpXToken = artifacts.require("LpXToken.sol");
+const XToken = artifacts.require("XToken.sol");
+const PurseToken = artifacts.require("PurseToken.sol")
+const TokenFarm = artifacts.require("TokenFarm.sol");
 const BridgeEth = artifacts.require('BridgeEth.sol');
 const BridgeBsc = artifacts.require('BridgeBsc.sol');
+
+function tokens(n) {
+  return web3.utils.toWei(n, 'ether');
+}
 
 module.exports = async function(deployer, network, accounts ) {
   if(network === 'rinkeby' || network === 'kovan' ||network === 'development') {
     // Deploy Mock Dai Token
-    await deployer.deploy(DaiToken)
-    const daiToken = await DaiToken.deployed()
+    await deployer.deploy(LpXToken)
+    const lpXToken = await LpXToken.deployed()
 
     //Deploy XToken
     await deployer.deploy(XToken)
     const xToken = await XToken.deployed()
+
+    //Deploy PurseToken
+    await deployer.deploy(PurseToken)
+    const purseToken = await PurseToken.deployed()
   
     //Deploy TokenFarm
-    await deployer.deploy(TokenFarm, xToken.address, daiToken.address, '10000000000000000000');
+    await deployer.deploy(TokenFarm, xToken.address, lpXToken.address, purseToken.address, tokens('10'))
     const tokenFarm = await TokenFarm.deployed()
     
-    // Transfer all tokens to TokenFarm (1million)
-    await xToken.transfer(tokenFarm.address, '500000000000000000000000')
+    // Transfer all purse tokens to TokenFarm
+    await purseToken.transfer(tokenFarm.address, tokens('1000000'))
+    console.log('Purse done')
 
-    // Transfer 100 Mock DAI tokens to TokenFarm
-    await daiToken.transfer(tokenFarm.address, '10000000000000000000000')
-    await daiToken.transfer(accounts[1], '30000000000000000000000')
-//    await daiToken.transfer(accounts[2], '100000000000000000000')
-//    await daiToken.transfer(accounts[3], '100000000000000000000')
-
-    await deployer.deploy(BridgeEth, xToken.address);
+    //Deploy BridgeEth contract
+    await deployer.deploy(BridgeEth, purseToken.address);
     const bridgeEth = await BridgeEth.deployed();
-    await xToken.updateAdmin(bridgeEth.address);
+    await purseToken.updateAdmin(bridgeEth.address);
+    
+    // Transfer all lpX tokens to TokenFarm (1million)
+    await lpXToken.transfer(tokenFarm.address, tokens('1000000'))
+    console.log('lpX done')
+
+    // Transfer 100 Mock X tokens to TokenFarm
+    // await xToken.transfer(tokenFarm.address, tokens('10000'))
+    // console.log('X1 done')
+    await xToken.transfer(accounts[1], tokens('5000'))
+    console.log('X2 done')
+    // await xToken.transfer(accounts[2], tokens('5000'))
+//    await xToken.transfer(accounts[3], tokens('5000'))
+
+
   }
+
   if(network === 'bscTestnet') {
+
+    //Deploy PurseToken
     // Deploy Mock Dai Token
-    await deployer.deploy(DaiToken)
-    const daiToken = await DaiToken.deployed()
+    await deployer.deploy(LpXToken)
+    const lpXToken = await LpXToken.deployed()
 
     //Deploy XToken
     await deployer.deploy(XToken)
     const xToken = await XToken.deployed()
-  
-    //Deploy TokenFarm
-    await deployer.deploy(TokenFarm, xToken.address, daiToken.address, '10000000000000000000');
-    const tokenFarm = await TokenFarm.deployed()
     
-    // Transfer all tokens to TokenFarm (1million)
-    await xToken.transfer(tokenFarm.address, '500000000000000000000000')
+    //Deploy PurseToken
+    await deployer.deploy(PurseToken)
+    const purseToken = await PurseToken.deployed()
 
-    // Transfer 100 Mock DAI tokens to TokenFarm
-    await daiToken.transfer(tokenFarm.address, '10000000000000000000000')
-    await daiToken.transfer(accounts[1], '30000000000000000000000')
-    //    await daiToken.transfer(accounts[2], '100000000000000000000')
+    //Deploy TokenFarm
+    await deployer.deploy(TokenFarm, xToken.address, lpXToken.address, purseToken.address, tokens('10'))
+    const tokenFarm = await TokenFarm.deployed()
 
-    await deployer.deploy(BridgeBsc, xToken.address);
+    await deployer.deploy(BridgeBsc, purseToken.address);
     const bridgeBsc = await BridgeBsc.deployed();
-    await xToken.updateAdmin(bridgeBsc.address);
+    await purseToken.updateAdmin(bridgeBsc.address);
   }
 };
