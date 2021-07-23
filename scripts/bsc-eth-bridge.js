@@ -62,7 +62,6 @@ const bridgeBsc = new web3Bsc.eth.Contract(
 
 
 
-
 bridgeBsc.events.Transfer({fromBlock: 0, step: 0})
 .on('data', async event => {
 //  console.log(event);

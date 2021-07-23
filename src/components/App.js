@@ -1,14 +1,18 @@
 import Web3 from 'web3'
 import React, { Component } from 'react'
 import Navbar from './Navbar'
-import LpXToken from '../abis/LpXToken.json'
+import LPXToken from '../abis/LPXToken.json'
 import XToken from '../abis/XToken.json'
 import PurseToken from '../abis/PurseToken.json'
+import NPXSXEMToken from '../abis/NPXSXEMToken.json'
 import TokenFarm from '../abis/TokenFarm.json'
 import BridgeEth from '../abis/BridgeEth.json'
 import BridgeBsc from '../abis/BridgeBsc.json'
+import NPXSXEMigration from '../abis/NPXSXEMigration.json'
 import Main from './Main'
+import NPXSMigration from './NPXSMigration'
 import './App.css'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 class App extends Component {
 
@@ -23,7 +27,9 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     console.log(accounts)
 
+
     this.setState({ account: accounts[0] })
+    console.log({ account: accounts[0] })
 
     const networkId = await web3.eth.net.getId()
     console.log(networkId)
@@ -43,10 +49,10 @@ class App extends Component {
     }
 
     // Load LpXToken
-    const lpXTokenData = LpXToken.networks[networkId]
+    const lpXTokenData = LPXToken.networks[networkId]
     console.log(lpXTokenData)
     if (lpXTokenData) {
-      const lpXToken = new web3.eth.Contract(LpXToken.abi, lpXTokenData.address)
+      const lpXToken = new web3.eth.Contract(LPXToken.abi, lpXTokenData.address)
       this.setState({ lpXToken })
       console.log(this.state.lpXToken)
       let lpXTokenBalance = await lpXToken.methods.balanceOf(this.state.account).call()
@@ -69,8 +75,64 @@ class App extends Component {
       let purseTokenBalance = await purseToken.methods.balanceOf(this.state.account).call()
       this.setState({ purseTokenBalance: purseTokenBalance.toString() })
       console.log({ pursebalance: window.web3.utils.fromWei(purseTokenBalance, 'Ether') })
+      const tokenFarmData = TokenFarm.networks[networkId]
+      const npxsxeMigrationData = NPXSXEMigration.networks[networkId]
+
+      let purseTokenBalance_farm = await purseToken.methods.balanceOf(tokenFarmData.address).call()
+      this.setState({ purseTokenBalance_farm: purseTokenBalance_farm.toString() })
+      console.log({ purseTokenBalance_farm: window.web3.utils.fromWei(purseTokenBalance_farm, 'Ether') })
+
+      let purseTokenBalance_migrate = await purseToken.methods.balanceOf(npxsxeMigrationData.address).call()
+      this.setState({ purseTokenBalance_migrate: purseTokenBalance_migrate.toString() })
+      console.log({ purseTokenBalance_migrate: window.web3.utils.fromWei(purseTokenBalance_migrate, 'Ether') })
+      
     } else {
       window.alert('PurseToken contract not deployed to detected network.')
+    }
+
+    // Load NPXSXEMToken
+    const npxsxemTokenData = NPXSXEMToken.networks[networkId]
+    console.log(npxsxemTokenData)
+    if (npxsxemTokenData) {
+      const npxsxemToken = new web3.eth.Contract(NPXSXEMToken.abi, npxsxemTokenData.address)
+      this.setState({ npxsxemToken })
+      let npxsxemTokenBalance = await npxsxemToken.methods.balanceOf(this.state.account).call()
+      this.setState({ npxsxemTokenBalance: npxsxemTokenBalance.toString() })
+      console.log({ npxsxembalance: window.web3.utils.fromWei(npxsxemTokenBalance, 'Ether') })
+    } else {
+      window.alert('NPXSXEMToken contract not deployed to detected network.')
+    }
+
+    // Load NPXSXEMigration
+    const npxsxeMigrationData = NPXSXEMigration.networks[networkId]
+    console.log(npxsxeMigrationData)
+    if (npxsxeMigrationData) {
+      const npxsxeMigration = new web3.eth.Contract(NPXSXEMigration.abi, npxsxeMigrationData.address)
+      this.setState({ npxsxeMigration })
+      let migrateCount = await npxsxeMigration.methods.migrateCount(this.state.account).call()
+      this.setState({ migrateCount })
+      console.log({ migrateCount: migrateCount })
+      let releaseIteration = await npxsxeMigration.methods.releaseIteration(this.state.account, migrateCount).call()
+      this.setState({ releaseIteration })
+      console.log({ releaseIteration: releaseIteration })
+
+      // let migrator = await npxsxeMigration.methods.migrator(this.state.account, migrateCount, releaseIteration).call()
+      // this.setState({ migrator })
+      // console.log({ migrator: migrator })
+
+      for (var i = 1; i <= migrateCount; i++) {
+        for (var n = 1; n <= releaseIteration; n++) {        
+        const migratorInfo = await npxsxeMigration.methods.migrator(this.state.account, i , n).call()
+        // this.setState({ migratorInfo })
+        // console.log({ migratorInfo: migratorInfo })
+        this.setState({
+          migrator: [...this.state.migrator, migratorInfo]
+          })
+        }
+      }
+      console.log(this.state.migrator)
+    } else {
+      window.alert('TokenFarm contract not deployed to detected network.')
     }
 
     // Load TokenFarm
@@ -218,6 +280,22 @@ class App extends Component {
     this.bridgeEthBscTransfer(address, amount, nonce, signature)
   }
 
+  migrateNPXSXEM = (amount) => {
+    this.setState({ loading: true })
+    this.state.npxsxemToken.methods.approve(this.state.npxsxeMigration._address, amount).send({ from: this.state.account }).on('transactionHash', (hash) => {
+      this.state.npxsxeMigration.methods.migrateNPXSXEM(amount).send({ from: this.state.account }).on('transactionHash', (hash) => {
+        this.setState({ loading: false })
+      })
+    })
+  }
+
+  release = (count, iteration) => {
+    this.setState({ loading: true })
+    this.state.npxsxeMigration.methods.release(count, iteration).send({ from: this.state.account }).on('transactionHash', (hash) => {
+      this.setState({ loading: false })
+    })
+  }
+
 
   constructor(props) {
     super(props)
@@ -232,16 +310,21 @@ class App extends Component {
       lpXTokenBalance: '0',
       lpXTokenBalance_farm: '0',
       purseTokenBalance: '0',
+      purseTokenBalance_farm: '0',
+      npxsxemTokenBalance: '0',
       stakerInfo: '0',
       farmInfo: '0',
+      migrator: [],
       loading: true
     }
   }
 
   render() {
     let content
+    let content2
     if (this.state.loading) {
       content = <p id="loader" className="text-center">Loading...</p>
+      content2 = <p id="loader" className="text-center">Loading...</p>
     } else {
       content = <Main
         account={this.state.account}
@@ -249,6 +332,8 @@ class App extends Component {
         lpXTokenBalance={this.state.lpXTokenBalance}
         lpXTokenBalance_farm={this.state.lpXTokenBalance_farm}
         purseTokenBalance={this.state.purseTokenBalance}
+        purseTokenBalance_farm={this.state.purseTokenBalance_farm}
+        npxsxemTokenBalance={this.state.npxsxemTokenBalance}
         stakerInfo={this.state.stakerInfo}
         farmInfo={this.state.farmInfo}
         stakeTokens={this.stakeTokens}
@@ -260,21 +345,49 @@ class App extends Component {
         bridgeEthBscTransfer={this.bridgeEthBscTransfer}
         signMessage={this.signMessage}
       />
+      content2 = <NPXSMigration
+        account={this.state.account}
+        xTokenBalance={this.state.xTokenBalance}
+        lpXTokenBalance={this.state.lpXTokenBalance}
+        lpXTokenBalance_farm={this.state.lpXTokenBalance_farm}
+        purseTokenBalance={this.state.purseTokenBalance}
+        purseTokenBalance_farm={this.state.purseTokenBalance_farm}
+        npxsxemTokenBalance={this.state.npxsxemTokenBalance}
+        stakerInfo={this.state.stakerInfo}
+        farmInfo={this.state.farmInfo}
+        migrator={this.state.migrator}
+        stakeTokens={this.stakeTokens}
+        unstakeTokens={this.unstakeTokens}
+        emergencyUnstakeTokens={this.emergencyUnstakeTokens}
+        transferOwnership={this.transferOwnership}
+        updateRewardTokens={this.updateRewardTokens}
+        redeemToken={this.redeemToken}
+        bridgeEthBscTransfer={this.bridgeEthBscTransfer}
+        migrateNPXSXEM={this.migrateNPXSXEM}
+        signMessage={this.signMessage}
+        release={this.release}
+      />
     }
 
     return (
-      <div>
-        <Navbar account={this.state.account} />
-        <div className="container-fluid mt-5">
-          <div className="row">
-            <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '800px' }}>
-              <div className="content mr-auto ml-auto">
-                {content}
-              </div>
-            </main>
+      <Router>
+        <div>
+          <Navbar account={this.state.account} />
+          <div className="container-fluid mt-5">
+            <div className="row">
+              <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '1100px' }}>
+                <div className="content mr-auto ml-auto">
+                  {/* {content} */}
+                  <Switch>
+                    <Route path="/" exact > {content} </Route>
+                    <Route path="/NPXSXEMigration" exact > {content2} </Route>
+                  </Switch>
+                </div>
+              </main>
+            </div>
           </div>
         </div>
-      </div>
+      </Router>
     );
   }
 }

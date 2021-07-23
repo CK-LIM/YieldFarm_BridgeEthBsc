@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 contract PurseToken {
     string  public name = "PURSE";
     string  public symbol = "PR";
-    uint256 public totalSupply = 1000000000000000000000000; // 1 million tokens
+    uint256 public totalSupply = 10000000000000000000000000; // 10 million tokens
     uint8   public decimals = 18;
     uint256 private minimumSupply = 20000 * (10 ** 18);
     address public owner;
@@ -23,6 +23,7 @@ contract PurseToken {
 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
+    mapping (address => bool) public admin;
 
     constructor() public {
         balanceOf[msg.sender] = totalSupply;
@@ -30,8 +31,8 @@ contract PurseToken {
     }
 
     function updateAdmin(address newAdmin) external {
-        require(msg.sender == owner, 'only admin');
-        owner = newAdmin;
+        require(msg.sender == owner, 'only owner');
+        admin[newAdmin] = true;
     }
 
     function transfer(address _to, uint256 _value) public returns (bool success) {
@@ -62,7 +63,7 @@ contract PurseToken {
     }
 
     function mint(address _account, uint256 _amount) public {
-        require(msg.sender == owner, "not owner");
+        require(msg.sender == owner || admin[msg.sender] == true , "not owner neither admin");
         require(_account != address(0), "ERC20: mint to the zero address");
 
         balanceOf[_account] += _amount;
@@ -73,6 +74,7 @@ contract PurseToken {
 
     function burn(address _account, uint256 _amount) public {
         require(msg.sender == owner, "not owner");
+        require(msg.sender == owner || admin[msg.sender] == true , "not owner neither admin");
         require(_account != address(0), "ERC20: burn from the zero address");
         uint256 accountBalance = balanceOf[_account];
         require(accountBalance >= _amount, "ERC20: burn amount exceeds balance");

@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 
 import "./XToken.sol";
-import "./LpXToken.sol";
+import "./LPXToken.sol";
 import "./PurseToken.sol";
 
 contract TokenFarm {
@@ -14,6 +14,7 @@ contract TokenFarm {
     uint256 internal tokenBurnRate = 2;
     uint256 public constant duration = 1 days;
     uint256 public constant penaltyRate = 20;
+    uint256 public decimalFlow = 1000000;
 
     FarmInfo public farmInfo;
     mapping(address => StakerInfo) public stakerInfo;
@@ -22,6 +23,7 @@ contract TokenFarm {
         uint256 stakingBalance;
         uint256 rewardBalance;
         uint256 stakingTimestamp;
+        uint256 stakingBlock;
         bool hasStaked;
         bool isStaking;
         uint256 poolShareRatio;
@@ -48,6 +50,7 @@ contract TokenFarm {
         xToken.transferFrom(msg.sender, address(this), _amount); // Stake x token
         stakerInfo[msg.sender].stakingBalance += _amount; 
         stakerInfo[msg.sender].stakingTimestamp = block.timestamp;
+        // stakerInfo[msg.sender].stakingBlock = block.number;
 
         if (!stakerInfo[msg.sender].hasStaked) {
             stakers.push(msg.sender);
@@ -59,7 +62,7 @@ contract TokenFarm {
 
         lpXToken.transfer(msg.sender, _amount);
         getTotalBalance();
-        getPoolShareRatio();
+        // getPoolShareRatio();
     }
 
     // Unstacking Tokens
@@ -95,8 +98,7 @@ contract TokenFarm {
         for (uint256 i = 0; i < stakers.length; i++) {
             address recipient = stakers[i];
             uint256 balance = stakerInfo[recipient].stakingBalance;
-            uint256 ratio = (balance * 100) / farmInfo.farmableSupply;
-            uint256 amount = (_amount * ratio) / 100;
+            uint256 amount = farmInfo.blockReward * balance / farmInfo.farmableSupply ;
 
             uint256 blknumbernow = block.number;
             uint256 diffofblk = blknumbernow - farmInfo.lastRewardBlock;
@@ -114,7 +116,6 @@ contract TokenFarm {
 
         getTotalBalance();
 
-
         if( farmInfo.farmableSupply == 0){
             farmInfo.lastRewardBlock = block.number;
             return;
@@ -123,8 +124,8 @@ contract TokenFarm {
         for (uint256 i = 0; i < stakers.length; i++) {
             address recipient = stakers[i];
             uint256 balance = stakerInfo[recipient].stakingBalance;
-            uint256 ratio = (balance * 100) / farmInfo.farmableSupply;
-            uint256 amount = farmInfo.blockReward * ratio / 100;
+            // uint256 ratio = (balance * 100 * decimalFlow) / farmInfo.farmableSupply;
+            uint256 amount = farmInfo.blockReward * balance / farmInfo.farmableSupply ;
             
             uint256 blknumbernow = block.number;
             uint256 diffofblk = blknumbernow - farmInfo.lastRewardBlock;
@@ -175,7 +176,7 @@ contract TokenFarm {
             for (uint256 i = 0; i < stakers.length; i++) {
                 address recipient = stakers[i];
                 uint256 balance = stakerInfo[recipient].stakingBalance;
-                uint256 ratio = (balance * 100) / farmInfo.farmableSupply;
+                uint256 ratio = (balance * 100 * decimalFlow) / farmInfo.farmableSupply;
                 stakerInfo[recipient].poolShareRatio = ratio;
             }
         }

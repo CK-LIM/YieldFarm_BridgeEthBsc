@@ -1,6 +1,11 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const infuraKey = "4f60244fe0ed4c24976d4bedbaf22222";
-//
+// const infuraKey = "b1184950e54f48c4929d27d11a762ed4";
+// const infuraKey = "4f60244fe0ed4c24976d4bedbaf22222";
+// const infuraKey = "bab6cd4ea2c34ef287fdec1424e20c1f";
+// const infuraKey = "6dbe369fdc4848f18226ada23a825c5e";
+const infuraKey = "f8814e0ae79f47f1a4d4d9df00b57e79";
+// const infuraKey = "abd5597872984160baacce0fb852267e";
+
 const fs = require('fs');
 const mnemonic = fs.readFileSync(".secret").toString().trim();
 
@@ -12,17 +17,22 @@ module.exports = {
     development: {
       host: "127.0.0.1",
       port: 7545,
-      network_id: "*" // Match any network id
+      network_id: "*", // Match any network id
+      // gas: 3000000,
+      // gasPrice: 20000000000,
+      // gasLimit: 5673399
     },
     rinkeby: {
       provider: () => new HDWalletProvider(
         mnemonic,
-        `https://rinkeby.infura.io/v3/${infuraKey}`),
+        // `https://rinkeby.infura.io/v3/${infuraKey}`,0, 2000),
+        `wss://rinkeby.infura.io/ws/v3/${infuraKey}`,0,2000),
       network_id: 4,
       gas: 3000000,
       gasPrice: 20000000000,
       confirmations: 0,
-      timeoutBlocks: 400,
+      networkCheckTimeout: 100000000,
+      timeoutBlocks: 40000,
       skipDryRun: true
     },
     kovan: {

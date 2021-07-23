@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom';
+import './App.css';
 import farmer from '../farmer.png'
 
 class Navbar extends Component {
@@ -16,14 +18,25 @@ class Navbar extends Component {
           &nbsp; X Token Farm
         </a>
 
+        <a className="nav-links ">
+          <Link className="text-light" to='/'><li>Liquidity Pool</li></Link>
+        </a>
+        <a className="nav-links ">
+          <Link className="text-light" to='/NPXSXEMigration'><li>Migrate NPXSXEM </li></Link>
+        </a>
+
         <ul className="navbar-nav px-3">
-          <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
+          <li className="nav-item text-nowrap-small d-none d-sm-none d-sm-block">
             <a className="text-light">
               <a id="account">{this.props.account}</a>
             </a>
           </li>
         </ul>
       </nav>
+
+
+
+
     );
   }
 }

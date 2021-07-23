@@ -52,14 +52,14 @@
     "absolutePath": "/home/ubuntu/Desktop/Blockchain Talent Program/YieldFarming/Yield_Farming_v3/src/contracts/IToken.sol",
     "exportedSymbols": {
       "IToken": [
-        314
+        291
       ]
     },
-    "id": 315,
+    "id": 292,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 299,
+        "id": 276,
         "literals": [
           "solidity",
           "^",
@@ -75,32 +75,32 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 314,
+        "id": 291,
         "linearizedBaseContracts": [
-          314
+          291
         ],
         "name": "IToken",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "functionSelector": "40c10f19",
-            "id": 306,
+            "id": 283,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "mint",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 304,
+              "id": 281,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 301,
+                  "id": 278,
                   "mutability": "mutable",
                   "name": "to",
                   "nodeType": "VariableDeclaration",
-                  "scope": 306,
+                  "scope": 283,
                   "src": "60:10:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -109,7 +109,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 300,
+                    "id": 277,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "60:7:3",
@@ -123,11 +123,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 303,
+                  "id": 280,
                   "mutability": "mutable",
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 306,
+                  "scope": 283,
                   "src": "72:11:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -136,7 +136,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 302,
+                    "id": 279,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "72:4:3",
@@ -151,12 +151,12 @@
               "src": "59:25:3"
             },
             "returnParameters": {
-              "id": 305,
+              "id": 282,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "93:0:3"
             },
-            "scope": 314,
+            "scope": 291,
             "src": "46:48:3",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -164,23 +164,23 @@
           },
           {
             "functionSelector": "9dc29fac",
-            "id": 313,
+            "id": 290,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "burn",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 311,
+              "id": 288,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 308,
+                  "id": 285,
                   "mutability": "mutable",
                   "name": "owner",
                   "nodeType": "VariableDeclaration",
-                  "scope": 313,
+                  "scope": 290,
                   "src": "111:13:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -189,7 +189,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 307,
+                    "id": 284,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "111:7:3",
@@ -203,11 +203,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 310,
+                  "id": 287,
                   "mutability": "mutable",
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 313,
+                  "scope": 290,
                   "src": "126:11:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -216,7 +216,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 309,
+                    "id": 286,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "126:4:3",
@@ -231,19 +231,19 @@
               "src": "110:28:3"
             },
             "returnParameters": {
-              "id": 312,
+              "id": 289,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "147:0:3"
             },
-            "scope": 314,
+            "scope": 291,
             "src": "97:51:3",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 315,
+        "scope": 292,
         "src": "25:128:3"
       }
     ],
@@ -253,14 +253,14 @@
     "absolutePath": "/home/ubuntu/Desktop/Blockchain Talent Program/YieldFarming/Yield_Farming_v3/src/contracts/IToken.sol",
     "exportedSymbols": {
       "IToken": [
-        314
+        291
       ]
     },
-    "id": 315,
+    "id": 292,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 299,
+        "id": 276,
         "literals": [
           "solidity",
           "^",
@@ -276,32 +276,32 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 314,
+        "id": 291,
         "linearizedBaseContracts": [
-          314
+          291
         ],
         "name": "IToken",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "functionSelector": "40c10f19",
-            "id": 306,
+            "id": 283,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "mint",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 304,
+              "id": 281,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 301,
+                  "id": 278,
                   "mutability": "mutable",
                   "name": "to",
                   "nodeType": "VariableDeclaration",
-                  "scope": 306,
+                  "scope": 283,
                   "src": "60:10:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -310,7 +310,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 300,
+                    "id": 277,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "60:7:3",
@@ -324,11 +324,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 303,
+                  "id": 280,
                   "mutability": "mutable",
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 306,
+                  "scope": 283,
                   "src": "72:11:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -337,7 +337,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 302,
+                    "id": 279,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "72:4:3",
@@ -352,12 +352,12 @@
               "src": "59:25:3"
             },
             "returnParameters": {
-              "id": 305,
+              "id": 282,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "93:0:3"
             },
-            "scope": 314,
+            "scope": 291,
             "src": "46:48:3",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -365,23 +365,23 @@
           },
           {
             "functionSelector": "9dc29fac",
-            "id": 313,
+            "id": 290,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "burn",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 311,
+              "id": 288,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 308,
+                  "id": 285,
                   "mutability": "mutable",
                   "name": "owner",
                   "nodeType": "VariableDeclaration",
-                  "scope": 313,
+                  "scope": 290,
                   "src": "111:13:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -390,7 +390,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 307,
+                    "id": 284,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "111:7:3",
@@ -404,11 +404,11 @@
                 },
                 {
                   "constant": false,
-                  "id": 310,
+                  "id": 287,
                   "mutability": "mutable",
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 313,
+                  "scope": 290,
                   "src": "126:11:3",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -417,7 +417,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 309,
+                    "id": 286,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "126:4:3",
@@ -432,19 +432,19 @@
               "src": "110:28:3"
             },
             "returnParameters": {
-              "id": 312,
+              "id": 289,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "147:0:3"
             },
-            "scope": 314,
+            "scope": 291,
             "src": "97:51:3",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 315,
+        "scope": 292,
         "src": "25:128:3"
       }
     ],
@@ -456,7 +456,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-06T02:26:09.889Z",
+  "updatedAt": "2021-07-16T15:55:14.881Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

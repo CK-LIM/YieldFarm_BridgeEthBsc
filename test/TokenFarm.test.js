@@ -1,9 +1,10 @@
 const { assert } = require('chai');
 const { default: Web3 } = require('web3');
 
-const DaiToken = artifacts.require("DaiToken");
+const LpXToken = artifacts.require("LPXToken");
 const XToken = artifacts.require("XToken");
 const TokenFarm = artifacts.require("TokenFarm");
+const PurseToken = artifacts.require("PurseToken")
 
 require('chai')
     .use(require('chai-as-promised'))
@@ -14,29 +15,30 @@ function tokens(n) {
 }
 
 contract('TokenFarm', ([owner, investor, investor2]) => {
-    let daiToken, xToken, tokenFarm
+    let lpXToken, xToken, tokenFarm, purseToken
 
     before(async () => {
-        daiToken = await DaiToken.new()
+        lpXToken = await LpXToken.new()
         xToken = await XToken.new()
-        tokenFarm = await TokenFarm.new(xToken.address, daiToken.address, tokens('10'))
+        purseToken = await PurseToken.new()
+        tokenFarm = await TokenFarm.new(xToken.address, lpXToken.address, purseToken.address, tokens('10'))
 
-        await xToken.transfer(tokenFarm.address, tokens('1000000'))
-        await daiToken.transfer(investor, tokens('100'), { from: owner })
-        await daiToken.transfer(investor2, tokens('100'), { from: owner })
+        await lpXToken.transfer(tokenFarm.address, tokens('1000000'))
+        await xToken.transfer(investor, tokens('100'), { from: owner })
+        await xToken.transfer(investor2, tokens('200'), { from: owner })
     })
 
-    describe('Mock DAI deployment', async () => {
+    describe('X deployment', async () => {
         it('has a name', async () => {
-            const name = await daiToken.name()
-            assert.equal(name, 'Mock DAI Token')
+            const name = await xToken.name()
+            assert.equal(name, 'PundiX')
         })
     })
 
-    describe('X Token deployment', async () => {
+    describe('LPX Token deployment', async () => {
         it('has a name', async () => {
-            const name = await xToken.name()
-            assert.equal(name, 'X Token')
+            const name = await lpXToken.name()
+            assert.equal(name, 'LPX')
         })
     })
 
@@ -48,11 +50,11 @@ contract('TokenFarm', ([owner, investor, investor2]) => {
 
         it('contract has tokens', async () => {
             let balance = await xToken.balanceOf(tokenFarm.address)
-            assert.equal(balance, tokens('1000000'))
+            assert.equal(balance, tokens('0'))
         })
 
         it('contract has tokens', async () => {
-            let balance = await xToken.balanceOf(tokenFarm.address)
+            let balance = await lpXToken.balanceOf(tokenFarm.address)
             assert.equal(balance, tokens('1000000'))
         })
     })
@@ -61,48 +63,48 @@ contract('TokenFarm', ([owner, investor, investor2]) => {
         it('rewards investors for staking mDAI tokens', async () => {
             let result
             // Check investor balance before staking
-            result = await daiToken.balanceOf(investor)
+            result = await xToken.balanceOf(investor)
             assert.equal(result, tokens('100'), 'investor has correct MDAI token before staking')
-            result = await daiToken.balanceOf(investor2)
-            assert.equal(result, tokens('100'), 'investor2 has correct MDAI token before staking')
+            result = await xToken.balanceOf(investor2)
+            assert.equal(result, tokens('200'), 'investor2 has correct MDAI token before staking')
 
             // Stake Mock DAI TOkens
-            await daiToken.approve(tokenFarm.address, tokens('100'), { from: investor })
+            await xToken.approve(tokenFarm.address, tokens('100'), { from: investor })
             await tokenFarm.stakeTokens(tokens('100'), { from: investor })
 
             // Check staking result
-            result = await daiToken.balanceOf(investor)
+            result = await xToken.balanceOf(investor)
             assert.equal(result, tokens('0'), 'investor has 0 MDAI token after staking')
 
-            result = await daiToken.balanceOf(tokenFarm.address)
+            result = await xToken.balanceOf(tokenFarm.address)
             assert.equal(result, tokens('100'), 'token Farm has 100 MDAI token after staking')
 
-            result = await tokenFarm.stakingBalance(investor)
-            assert.equal(result, tokens('100'), 'investor has 100 MDAI token staking balance after staking')
+            const stakerInfo1 = await tokenFarm.stakerInfo(investor)
+            assert.equal(stakerInfo1.stakingBalance, tokens('100'), 'investor has 100 MDAI token staking balance after staking')
+            assert.equal(stakerInfo1.isStaking.toString(), 'true', 'investor has staking status after staking')
 
-            result = await xToken.balanceOf(investor)
-            assert.equal(result, tokens('100'), 'investor X Token wallet balance correct after staking')
+            result = await lpXToken.balanceOf(investor)
+            assert.equal(result, tokens('100'), 'investor lpX Token wallet balance correct after staking')
 
-            result = await tokenFarm.isStaking(investor)
-            assert.equal(result.toString(), 'true', 'investor has staking status after staking')
+
 
              // Stake Mock DAI TOkens investor2         
-            await daiToken.approve(tokenFarm.address, tokens('100'), { from: investor2 })
+            await xToken.approve(tokenFarm.address, tokens('100'), { from: investor2 })
             await tokenFarm.stakeTokens(tokens('100'), { from: investor2 })
-             // Check staking result investor2           
-            result = await tokenFarm.stakingBalance(investor2)
-            assert.equal(result, tokens('100'), 'investor2 has 100 MDAI token staking balance after staking')
+             // Check staking result investor2
+            const stakerInfo2 = await tokenFarm.stakerInfo(investor2)    
+            assert.equal(stakerInfo2.stakingBalance, tokens('100'), 'investor2 has 100 x token staking balance after staking')
 
             // Issue Tokens
-            await tokenFarm.issueTokens(tokens('50'))
-            result = await xToken.balanceOf(investor)
-            assert.equal(result, tokens('125'), 'investor X Token wallet balance correct after issue tokens')
+            // await tokenFarm.issueTokens(tokens('50'))
+            // result = await xToken.balanceOf(investor)
+            // assert.equal(result, tokens('125'), 'investor X Token wallet balance correct after issue tokens')
 
-            result = await xToken.balanceOf(investor2)
-            assert.equal(result, tokens('125'), 'investor2 X Token wallet balance correct after issue tokens')
+            // result = await xToken.balanceOf(investor2)
+            // assert.equal(result, tokens('125'), 'investor2 X Token wallet balance correct after issue tokens')
 
             // Ensure that only owner can issue tokens
-            await tokenFarm.issueTokens(tokens('100'), { from: investor }).should.be.rejected;
+            // await tokenFarm.issueTokens(tokens('100'), { from: investor }).should.be.rejected;
 
             //Unstake tokens
             await xToken.approve(tokenFarm.address, tokens('100'), { from: investor })

@@ -18,7 +18,27 @@ class Main extends Component {
                     Update Reward Balance
                 </button>&nbsp;
 
-                <h2 className="table table-borderless text-muted text-center">Stake Token!</h2>
+                <h1 className="table table-borderless text-muted text-center">Stake Token!</h1>&nbsp;
+                <h3 className="table table-borderless text-muted text-center">Pool Info</h3>
+                <table className="table table-borderless text-muted text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Block Reward</th>
+                            <th scope="col">Pool Staking Balance</th>
+                            <th scope="col">Pool LPX Balance</th>
+                            <th scope="col">Pool PURSE Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr> 
+                            <td>{window.web3.utils.fromWei(this.props.farmInfo.blockReward, 'Ether')} Purse</td>
+                            <td>{window.web3.utils.fromWei(this.props.farmInfo.farmableSupply, 'Ether')} X</td>
+                            <td>{window.web3.utils.fromWei(this.props.lpXTokenBalance_farm, 'Ether')} TF.LPX</td>
+                            <td>{window.web3.utils.fromWei(this.props.purseTokenBalance_farm, 'Ether')} TF.PURSE</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 className="table table-borderless text-muted text-center">Staker Info</h3>
                 <table className="table table-borderless text-muted text-center">
                     <thead>
                         <tr>
@@ -26,20 +46,14 @@ class Main extends Component {
                             <th scope="col">LPX Token Balance</th>
                             <th scope="col">Your Pool Share</th>
                             <th scope="col">Your Reward Balance</th>
-                            <th scope="col">Block Reward</th>
-                            <th scope="col">Pool Total Staking Balance</th>
-                            <th scope="col">Contract LPX Token Balance</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>{window.web3.utils.fromWei(this.props.stakerInfo.stakingBalance, 'Ether')} X</td>
                             <td>{window.web3.utils.fromWei(this.props.lpXTokenBalance, 'Ether')} LPX</td>
-                            <td>{this.props.stakerInfo.poolShareRatio} %</td>
+                            <td>{this.props.stakerInfo.poolShareRatio / 1000000} %</td>
                             <td>{window.web3.utils.fromWei(this.props.stakerInfo.rewardBalance, 'Ether')} PURSE</td>
-                            <td>{window.web3.utils.fromWei(this.props.farmInfo.blockReward, 'Ether')} Purse</td>
-                            <td>{window.web3.utils.fromWei(this.props.farmInfo.farmableSupply, 'Ether')} X</td>
-                            <td>{window.web3.utils.fromWei(this.props.lpXTokenBalance_farm, 'Ether')} TF.LPX</td>
                         </tr>
                     </tbody>
                 </table>
@@ -79,7 +93,7 @@ class Main extends Component {
                         onClick={(event) => {
                             event.preventDefault()
                             let amount
-                            amount = window.web3.utils.fromWei(this.props.xTokenBalance, 'Ether')
+                            amount = window.web3.utils.fromWei(this.props.lpXTokenBalance, 'Ether')
                             amount = window.web3.utils.toWei(amount, 'Ether')
                             this.props.unstakeTokens(amount)
                         }}>
@@ -91,7 +105,7 @@ class Main extends Component {
                         onClick={(event) => {
                             event.preventDefault()
                             let amount
-                            amount = window.web3.utils.fromWei(this.props.xTokenBalance, 'Ether')
+                            amount = window.web3.utils.fromWei(this.props.lpXTokenBalance, 'Ether')
                             amount = window.web3.utils.toWei(amount, 'Ether')
                             this.props.emergencyUnstakeTokens(amount)
                         }}>

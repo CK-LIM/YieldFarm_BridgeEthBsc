@@ -1,19 +1,22 @@
-const LpXToken = artifacts.require("LpXToken.sol");
+const LPXToken = artifacts.require("LPXToken.sol");
 const XToken = artifacts.require("XToken.sol");
 const PurseToken = artifacts.require("PurseToken.sol")
 const TokenFarm = artifacts.require("TokenFarm.sol");
+const NPXSXEMToken = artifacts.require("NPXSXEMToken.sol")
+const NPXSXEMigration = artifacts.require("NPXSXEMigration.sol")
 const BridgeEth = artifacts.require('BridgeEth.sol');
 const BridgeBsc = artifacts.require('BridgeBsc.sol');
+
 
 function tokens(n) {
   return web3.utils.toWei(n, 'ether');
 }
 
 module.exports = async function(deployer, network, accounts ) {
-  if(network === 'rinkeby' || network === 'kovan' ||network === 'development') {
+  if(network === 'rinkeby' || network === 'kovan' || network === 'development') {
     // Deploy Mock Dai Token
-    await deployer.deploy(LpXToken)
-    const lpXToken = await LpXToken.deployed()
+    await deployer.deploy(LPXToken)
+    const lpXToken = await LPXToken.deployed()
 
     //Deploy XToken
     await deployer.deploy(XToken)
@@ -22,13 +25,22 @@ module.exports = async function(deployer, network, accounts ) {
     //Deploy PurseToken
     await deployer.deploy(PurseToken)
     const purseToken = await PurseToken.deployed()
+
+    //Deploy NPXSXEMToken
+    await deployer.deploy(NPXSXEMToken)
+    const npxsxemToken = await NPXSXEMToken.deployed()
   
     //Deploy TokenFarm
     await deployer.deploy(TokenFarm, xToken.address, lpXToken.address, purseToken.address, tokens('10'))
     const tokenFarm = await TokenFarm.deployed()
-    
+
+    //Deploy npxsxeMigration
+    await deployer.deploy(NPXSXEMigration, npxsxemToken.address, purseToken.address)
+    const npxsxeMigration = await NPXSXEMigration.deployed()
+
     // Transfer all purse tokens to TokenFarm
-    await purseToken.transfer(tokenFarm.address, tokens('2000000'))
+    await purseToken.transfer(tokenFarm.address, tokens('5000000'))
+    await purseToken.transfer(npxsxeMigration.address, tokens('5000000'))
     console.log('Purse done')
 
     //Deploy BridgeEth contract
