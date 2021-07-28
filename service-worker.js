@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/YieldFarm_BridgeEthBsc/precache-manifest.1716512a1372758fec8088866c4091a0.js"
+  "/YieldFarm_BridgeEthBsc/precache-manifest.da71b5047e0005e2c6094bf7a9e4cd26.js"
 );
 
 workbox.clientsClaim();
