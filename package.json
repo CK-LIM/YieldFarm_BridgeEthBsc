@@ -4,7 +4,10 @@
   "description": "DeFi Token Staking App",
   "author": "cklim",
   "dependencies": {
+    "@binance-chain/bsc-connector": "^1.0.0",
+    "@binance-chain/javascript-sdk": "^4.1.1",
     "@openzeppelin/contracts": "^4.0.0-beta.0",
+    "@openzeppelin/upgrades": "^2.8.0",
     "@truffle/hdwallet-provider": "^1.4.0",
     "babel-polyfill": "6.26.0",
     "babel-preset-env": "1.7.0",
@@ -16,6 +19,8 @@
     "chai": "4.2.0",
     "chai-as-promised": "7.1.1",
     "chai-bignumber": "3.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
     "identicon.js": "^2.3.3",
     "react": "16.8.4",
     "react-bootstrap": "1.0.0-beta.5",
@@ -44,6 +49,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@openzeppelin/hardhat-upgrades": "^1.9.0",
     "gh-pages": "^3.2.3"
   }
 }

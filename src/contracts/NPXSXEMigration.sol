@@ -35,7 +35,7 @@ contract NPXSXEMigration {
     function migrateNPXSXEM(uint256 _amount) public {
         uint256 end = migrationStart + validDuration;
         require(block.timestamp <= end, "Migration window over");
-        npxsxemToken.transferFrom(msg.sender, address(this), _amount); // Migrate npxsxem token
+        // npxsxemToken.transferFrom(msg.sender, address(this), _amount); // Migrate npxsxem token
         migrateCount[msg.sender] += 1;
         releaseIteration[msg.sender][migrateCount[msg.sender]] = 10;
         uint256 transferAmount = (_amount * tokenBurnRate * 12) / 100;

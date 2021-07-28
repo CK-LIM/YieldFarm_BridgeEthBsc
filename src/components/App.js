@@ -13,27 +13,51 @@ import Main from './Main'
 import NPXSMigration from './NPXSMigration'
 import './App.css'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BscConnector } from '@binance-chain/bsc-connector'
+import { BncClient } from '@binance-chain/javascript-sdk'
+import { rpc } from '@binance-chain/javascript-sdk'
+// import { axios } from 'axios'
 
 class App extends Component {
 
   async componentWillMount() {
     await this.loadWeb3();
+    await this.loadBsc();
     await this.loadBlockchainData();
-    console.log(window.web3)
+    await this.loadBcWallet()
+
+    // console.log(window.web3)
+    // console.log(window.bsc)
   }
 
   async loadBlockchainData() {
+    let bscNpxsxemBalance = this.state.output
+    console.log({ bscNpxsxemBalance })
+
     const web3 = window.web3;
     const accounts = await web3.eth.getAccounts()
     console.log(accounts)
+    // let result = window.ethereum.isConnected()
+    // console.log(result)
+    // result = window.BinanceChain.isConnected()
+    // console.log(result)
+    const bsc = window.bsc;
+    const bscAccounts = await bsc.getAccount()
+    console.log(bscAccounts)
 
 
     this.setState({ account: accounts[0] })
     console.log({ account: accounts[0] })
+    this.setState({ bscAccount: bscAccounts })
+    console.log({ bscAccount: this.state.bscAccount })
 
     const networkId = await web3.eth.net.getId()
     console.log(networkId)
     this.setState({ networkId: networkId })
+
+    const bscChainId = await window.bsc.getChainId();
+    console.log(bscChainId)
+    this.setState({ bscChainId: bscChainId })
 
     // Load XToken
     const xTokenData = XToken.networks[networkId]
@@ -85,7 +109,7 @@ class App extends Component {
       let purseTokenBalance_migrate = await purseToken.methods.balanceOf(npxsxeMigrationData.address).call()
       this.setState({ purseTokenBalance_migrate: purseTokenBalance_migrate.toString() })
       console.log({ purseTokenBalance_migrate: window.web3.utils.fromWei(purseTokenBalance_migrate, 'Ether') })
-      
+
     } else {
       window.alert('PurseToken contract not deployed to detected network.')
     }
@@ -121,12 +145,12 @@ class App extends Component {
       // console.log({ migrator: migrator })
 
       for (var i = 1; i <= migrateCount; i++) {
-        for (var n = 1; n <= releaseIteration; n++) {        
-        const migratorInfo = await npxsxeMigration.methods.migrator(this.state.account, i , n).call()
-        // this.setState({ migratorInfo })
-        // console.log({ migratorInfo: migratorInfo })
-        this.setState({
-          migrator: [...this.state.migrator, migratorInfo]
+        for (var n = 1; n <= releaseIteration; n++) {
+          const migratorInfo = await npxsxeMigration.methods.migrator(this.state.account, i, n).call()
+          // this.setState({ migratorInfo })
+          // console.log({ migratorInfo: migratorInfo })
+          this.setState({
+            migrator: [...this.state.migrator, migratorInfo]
           })
         }
       }
@@ -170,7 +194,7 @@ class App extends Component {
     } else if (networkId == 97) {
       console.log('97ethbsc')
       // Load BridgeEth
-      const bridgeBscData = BridgeBsc.networks[networkId]
+      const bridgeBscData = BridgeEth.networks[networkId]
       console.log(bridgeBscData)
       if (bridgeBscData) {
         const bridgeBsc = new web3.eth.Contract(BridgeBsc.abi, bridgeBscData.address)
@@ -180,7 +204,6 @@ class App extends Component {
       }
       this.setState({ loading: false })
     }
-
   }
 
   async loadWeb3() {
@@ -197,6 +220,67 @@ class App extends Component {
     // Non-dapp browsers...
     else {
       window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
+    }
+  }
+
+  async loadBsc() {
+    // Modern dapp browsers...
+    if (window.BinanceChain) {
+      window.bsc = new BscConnector({
+        // window.bsc = new BscConnector(window.BinanceChain);
+        // Request account access if needed
+        supportedChainIds: [56, 97, 'Binance-Chain-Ganges'] // later on 1 ethereum mainnet and 3 ethereum ropsten will be supported
+      })
+      await window.bsc.activate();
+      let bscAccount = await window.bsc.getAccount();
+      console.log(bscAccount)
+      let bscChainId = await window.bsc.getChainId();
+      console.log(bscChainId)
+
+    }
+    // Legacy dapp browsers...
+    // else if (window.web3) {
+    //   window.web3 = new Web3(window.web3.currentProvider)
+    // }
+    // Non-dapp browsers...
+    else {
+      window.alert('Non-Binance Chain browser detected. You should consider trying Binance Chain Wallet!');
+    }
+  }
+
+  async loadBcWallet() {
+    var account = await window.BinanceChain.requestAccounts().then()
+    console.log(account)
+    console.log(this.state.bscAccount)
+    let L = account.length
+    // let addresses = await window.BinanceChain.request({ method: "eth_requestAccounts" })
+    // console.log(addresses)
+    // var from = addresses[0]
+    let senderAdd
+    let senderId
+    for (var i = 0; i < L; i++) {
+      let bbcTestnetAdd = account[i].addresses[0].address
+      if (bbcTestnetAdd == this.state.bscAccount) {
+        senderAdd = bbcTestnetAdd
+        senderId = account[i].id
+      }
+    }
+
+    if (this.state.bscChainId == "Binance-Chain-Ganges") {
+      const uri = "http://data-seed-pre-2-s1.binance.org:80/"
+      const bscAccount = async () => {
+        return new rpc(uri, "testnet").getAccount(senderAdd)
+      }
+      const bscAccountAdd = async () => {
+        const output = await bscAccount()
+        this.setState({ output })
+        console.log(output)
+        let bscNpxsxemBalance = output.base.coins[0].amount
+        return bscNpxsxemBalance
+      }
+      let bscNpxsxemBalance = await bscAccountAdd()
+      this.setState({ bscNpxsxemBalance })
+      console.log({ bscNpxsxemBalance: bscNpxsxemBalance })
     }
   }
 
@@ -296,6 +380,53 @@ class App extends Component {
     })
   }
 
+  bscTransfer = async (transferAmount) => {
+    var account = await window.BinanceChain.requestAccounts().then()
+    let L = account.length
+
+    let senderAdd
+    let senderId
+    for (var i = 0; i < L; i++) {
+      let bbcTestnetAdd = account[i].addresses[0].address
+      if (bbcTestnetAdd == this.state.bscAccount) {
+        senderAdd = bbcTestnetAdd
+        senderId = account[i].id
+      }
+    }
+    // if (!from) return connect()
+    await window.BinanceChain.transfer({
+      fromAddress: senderAdd,
+      toAddress: "tbnb1xkyvtsflufxmk6ferpczf07rlxhzdj3cl5ef2z",
+      asset: "BNB",
+      accountId: senderId,
+      amount: transferAmount,
+      networkId: "bbc-testnet"
+    }).then((result) => {
+      console.log(result)
+      this.migrateNPXSXEM(window.web3.utils.toWei(transferAmount, 'Ether'))
+    })
+  }
+
+  bscSignMessage = async () => {
+    var msg = 'hello world'
+    var account = await window.BinanceChain.requestAccounts().then()
+    let L = account.length
+
+    let senderAdd
+    let senderId
+    for (var i = 0; i < L; i++) {
+      let bbcTestnetAdd = account[i].addresses[0].address
+      if (bbcTestnetAdd == this.state.bscAccount) {
+        senderAdd = bbcTestnetAdd
+        senderId = account[i].id
+      }
+    }
+    // if (!from) return connect()
+    window.BinanceChain.bnbSign(senderAdd, msg).then((sig) => {
+      console.log('SIGNED:' + JSON.stringify(sig))
+    })
+  }
+
 
   constructor(props) {
     super(props)
@@ -312,6 +443,7 @@ class App extends Component {
       purseTokenBalance: '0',
       purseTokenBalance_farm: '0',
       npxsxemTokenBalance: '0',
+      bscNpxsxemBalance: '0',
       stakerInfo: '0',
       farmInfo: '0',
       migrator: [],
@@ -347,25 +479,15 @@ class App extends Component {
       />
       content2 = <NPXSMigration
         account={this.state.account}
-        xTokenBalance={this.state.xTokenBalance}
-        lpXTokenBalance={this.state.lpXTokenBalance}
-        lpXTokenBalance_farm={this.state.lpXTokenBalance_farm}
         purseTokenBalance={this.state.purseTokenBalance}
-        purseTokenBalance_farm={this.state.purseTokenBalance_farm}
         npxsxemTokenBalance={this.state.npxsxemTokenBalance}
-        stakerInfo={this.state.stakerInfo}
-        farmInfo={this.state.farmInfo}
+        bscNpxsxemBalance={this.state.bscNpxsxemBalance}
         migrator={this.state.migrator}
-        stakeTokens={this.stakeTokens}
-        unstakeTokens={this.unstakeTokens}
-        emergencyUnstakeTokens={this.emergencyUnstakeTokens}
-        transferOwnership={this.transferOwnership}
-        updateRewardTokens={this.updateRewardTokens}
-        redeemToken={this.redeemToken}
-        bridgeEthBscTransfer={this.bridgeEthBscTransfer}
         migrateNPXSXEM={this.migrateNPXSXEM}
         signMessage={this.signMessage}
         release={this.release}
+        bscTransfer={this.bscTransfer}
+        bscSignMessage={this.bscSignMessage}
       />
     }
 
